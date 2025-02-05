@@ -3,6 +3,6 @@ function helloWorld() {
 }
 helloWorld();
 function everythingWorks() {
-  console.log('Все работает!');
+  console.log('Возможно, все работает!');
 }
 everythingWorks();
