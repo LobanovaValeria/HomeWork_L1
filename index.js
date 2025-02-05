@@ -1,4 +1,8 @@
 function helloWorld() {
   console.log('Привет, мир!');
 }
-helloWorld(); 
+helloWorld();
+function everythingWorks() {
+  console.log('Все работает!');
+}
+everythingWorks();
