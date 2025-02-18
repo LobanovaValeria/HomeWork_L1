@@ -1,138 +1,126 @@
-//Задание 1 – Создать объект workingObject всеми возможными способами;
-const innerObject = {};
-const middleArray = [1, 2, 3, innerObject];
-const workingObject = {a: middleArray};
-const workingObject2 = { a: [1, 2, 3, innerObject] };
-const workingObject3={};
-Object.assign(workingObject3, {a:middleArray});
-const workingObject4=new Object();
-workingObject4.a=middleArray;
-const workingObject5={a: [1,2,3,{}]};
-//console.log(workingObject,workingObject2,workingObject3,workingObject4,workingObject5);
+//1) Написать ответ - почему массивы в JS являются "неправильными" и совмещают в себе несколько структур данных? Какие ?
+//Массивы являются неправильными в JS, потому что соечают в себе несколько несколько структур.
+//При этом в качестве значений могут выступать разные типы данных
+//Массивы сочетают в себе как хеш-таблицы, так и список.Возможно, еще стэк и очередь.
 
-//Задание 2 – Скопировать объект workingObject всеми возможными способами; 
-const copyWorkingObject={...workingObject};
-const copyWorkingObject2={};
-Object.assign(copyWorkingObject2, workingObject);
-const copyWorkingObject3=structuredClone(workingObject);
-const copyWorkingObject4={};
-for(let key in workingObject){
-    copyWorkingObject4[key]=workingObject[key];
+//2) Привязать контекст объекта к функции logger, чтобы при вызове this.item выводило - some value (Привязать через bind, call, apply)
+
+function logger() {
+  console.log(`I output only external context: ${this.item}`);
 }
-//console.log(copyWorkingObject,copyWorkingObject2,copyWorkingObject3, copyWorkingObject4);
-//Задание 3 – На последних страницах лекции(в аттаче) есть функция makeCounter. Создать функцию makeCounter всеми описанными и возможными способами; 
 
-//используем FD
-function makeCounter() {
-    let count=0;
-    return function() {
-       return count++;
+const obj = { item: 'some value' };
+logger.call(obj);
+logger.apply(obj);
+logger.bind(obj)();
+
+//3.1 this:
+//* при решении задач имеет смысл рассуждать вслух. Прежде всего это касается срезов и собеседований. Это может помочь споткнуться на неправильном решении, не  даёт повиснуть тишине (скрадывает время для собеседующего) и позволяет вступить в диалог с интервьюером - иногда он может помочь развить мысль о решении или повернуть в нужную сторону.
+const obj2 = {
+  a: 1,
+  e: (function () {
+    return () => {
+      console.log(this.a);
+    };
+  })(),
+};
+obj2.e(); //undefined
+obj2.e.call({ a: 2 }); //undefined
+
+//3.2 this:
+
+const obj3 = {
+    child: {
+        i: 10,
+        b: () => console.log(this.i, this),
+        c() {
+            console.log(this.i, this);
+        },
     }
+};
+
+//obj3.child.b(); //undefined {}
+//obj3.child.c(); //10 { i: 10, b: [Function: b], c: [Function: c] }
+
+//3.3 this:
+
+function foo() {
+     const x = 10;
+     return {
+         x: 20,
+         bar: () => {
+             console.log(this.x);
+         },
+         baz: function () {
+             console.log(this.x);
+         }
+     };
+ }
+
+ const obj4 = foo();
+ console.log(obj4);
+ obj4.bar(); // undefined
+ obj4.baz(); // 20
+
+ const obj5 = foo.call({ x: 30 });
+ 
+ let y = obj5.bar; 
+ let z = obj5.baz; 
+ y();   // 30
+ z();   // undefined
+ 
+ obj5.bar();    //  30
+ obj5.baz();    //  20
+
+ //4.1 Массивы:
+
+//- Создайте массив чисел и найдите его сумму разными способами.
+let arr1=[0,1,2,3,4];
+let sum1=0;
+for(let i=0;i<arr1.length;i++){
+    sum1+=arr1[i];
 }
-let counter=makeCounter();
+console.log(sum1);
+let sum2=0;
+arr1.forEach((item)=>{
+    sum2+=item;
+});
+console.log(sum2);
 
-//используем FE
+let sum3=arr1.reduce((acc, item, arr)=>
+    acc+item
+,0);
+console.log(sum3);
 
-let makeCounter2=function () {
-    let count=0;
-    return function() {
-       return count++;
-    }
+let sum4=0;
+for(let num of arr1){
+    sum4+=num;
 }
-let counter2=makeCounter2();
-
-//arrow f
-let makeCounter3=()=>{
-    let count=0;
-    return ()=>{
-       return count++;
-    }
+console.log(sum4);
+//- Создайте массив строк и объедините их в одну строку разными способами.
+let arr=['a','b','c'];
+let arrToStr1=arr.join('');
+let arrToStr2='';
+for(let i=0;i<arr.length;i++){
+    arrToStr2+=arr[i];
 }
-let counter3=makeCounter3();
-
-//NFD
-let makeCounter4=function makeCounter_4() {
-    let count=0;
-    return function() {
-       return count++;
-    }
+let arrToStr3=arr.reduce((acc, i)=>acc+i,'');
+let arrToStr4='';
+for(let num of arr){
+    arrToStr4+=num;
 }
-let counter4=makeCounter4();
+let arrToStr5='';
+arr.forEach((item)=>arrToStr5+=item);
+//- Найдите максимальный и минимальный элементы в массиве чисел разными способами.
+let arr6=[1,2,3,4,5,4,3,1];
+let max=Math.max.apply(arr6);
+let min=Math.min.apply(arr6);
+let sortArr=arr6.sort((a,b)=>a-b);
+let min2=sortArr[0];
+let max2=sortArr[sortArr.length-1];
 
-// console.log(counter(),counter2(), counter3(), counter4());
-// console.log(counter(),counter2(), counter3(), counter4());
-// console.log(counter(),counter2(), counter3(), counter4());
-// console.log(counter(),counter2(), counter3(), counter4());
+//4.2 Stack (стек):
 
-
-
-//Бонус Задание 2 – Развернуть строку в обратном направлении при помощи методов массивов:
-//если нужно просто строку развернуть, не предложения по словам, тогда 
-function reverseStr(str) { 
-    return str.split('').reverse().join('');
-}
-//console.log(reverseStr('abc'));
-
-//задание на замыкание
-function createIncrement() {
-    let value = 0
-
-    function increment(){
-             value += 1;
-             console.log(value)
-    }
-
-    let message = `Current value is ${value}`
-
-    function log(){
-       
-             console.log(message)
-    }
-    
-    return [increment, log];
-}
-
-const [increment, log] = createIncrement();
-log() //"Current value is 0"        // почему не 3? 
-//во-первых message объявлено через const, во-вторых изменение value замкнуто
-//то есть никто, кроме внутр окр increment не в курсе , что value изменилось
-
-//Задача на замыкание 2:
-
-let group = getGroup();
-
-group[0](); // 10 из-за того, что консоль лог не выз сразу  в итоге созр ссылка на пер i, а она в конце равна 10
-group[5](); // 10 
-
-function getGroup() {
-  let students = [];
-  let i = 0;
-  while (i < 10) {
-    students[i] = function() {
-      console.log(i);
-    }
-    i++
-  }
-
-  return students;
-}
-
-//Задача на замыкание 3:
-
-var globalVar = 'global';
-var outerVar = 'outer';
-
-function outerFunc(outerParam) {
-    function innerFunc(innerParam) {
-        console.log(globalVar, outerParam, innerParam); // guess,outer,inner
-    }
-    return innerFunc;
-}
-
-const x = outerFunc(outerVar); //ссылка на внутр ф
-outerVar = 'outer-2';
-globalVar = 'guess';
-x('inner'); //здесь вызывается внутр ф
-
-
+//- Реализуйте стек с использованием массива.
+//- Не обязательно. По желанию можно попробовать пообходить дерево через стек.
 
